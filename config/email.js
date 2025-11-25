@@ -3,24 +3,22 @@ const nodemailer = require('nodemailer');
 // Gmail configuration with explicit SMTP settings for better compatibility
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // Use TLS
+  port: 465, // Use SSL port instead of TLS
+  secure: true, // Use SSL
   auth: {
     user: process.env.EMAILID,
     pass: process.env.PASSWORD
   },
   tls: {
-    rejectUnauthorized: false // Allow self-signed certificates
-  },
-  connectionTimeout: 10000, // 10 seconds
-  greetingTimeout: 10000,
-  socketTimeout: 10000
+    rejectUnauthorized: false
+  }
 });
 
-// Verify transporter configuration on startup
+// Verify transporter configuration on startup (don't block if it fails)
 transporter.verify(function(error, success) {
   if (error) {
-    console.error('❌ Email transporter verification failed:', error);
+    console.error('⚠️  Email transporter verification failed:', error.message);
+    console.log('⚠️  Email may not work. Consider using SendGrid instead.');
   } else {
     console.log('✅ Email server is ready to send messages');
   }
